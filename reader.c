@@ -31,13 +31,9 @@ Status read_and_validate(char*argv[])
 }
 Status skip_header(FILE*fptr)
 {
-    //printf("before skipping header:%lu\n",ftell(fptr));
     //skip 10 byte header
     fseek(fptr,10,SEEK_SET);
     printf("skipped header\n");
-    //printf("after skipping header:%lu\n",ftell(fptr));
-    
-
     return success;
 }
 
@@ -51,27 +47,16 @@ Status do_reading(FILE* fptr)
     if(fread(tag,1,4,fptr)!=4)
     return failure;
     tag[4]='\0';
-    //printf("4byte tag read successfully\n");
-    //printf("offset:%lu\n",ftell(fptr));
     if(tag[0] == 0)   
         return failure;
     //read 4 byte size
     if(fread(size,1,4,fptr)!=4)
     return failure;
-    //printf("4byte size read successfully\n");
-    //printf("offset:%lu\n",ftell(fptr));
-    //convert to little endian
     tag_size=(size[0]<<24)|(size[1]<<16)|(size[2]<<8)|(size[3]);
     
 
     //skip flag
     fseek(fptr,2,SEEK_CUR);
-    //printf("skipped 2 byte flag\n");
-    //printf("offset:%lu\n",ftell(fptr));
-
-    //printf("Calculated tag_size: %d\n", tag_size);
-    //read tag data
-    //char data[tag_size];
     char*data=malloc(tag_size);
     if(data==NULL)
     {
@@ -82,8 +67,6 @@ Status do_reading(FILE* fptr)
     if(fread(data,1,tag_size,fptr)!=tag_size)
     return failure;
     data[tag_size]='\0';
-    //printf("tag data read successfully\n");
-    //printf("offset:%lu\n",ftell(fptr));
     if (strcmp(tag,"TIT2") ==0||
         strcmp(tag,"TALB")==0 ||
         strcmp(tag,"TYER")==0 ||
@@ -92,7 +75,6 @@ Status do_reading(FILE* fptr)
         strcmp(tag,"TPE1")==0)
         {
             printf("%s:",tag);
-            //printf("Tag data:");
             if(data[0]==1)
             {
                 for(int i=3;i<tag_size;i++)
