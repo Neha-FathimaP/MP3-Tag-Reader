@@ -26,7 +26,6 @@ Status edit_mode(int argc, char *argv[])
     fseek(src,0,SEEK_END);
     printf("file size before editing:%lu\n",ftell(src));
     rewind(src);
-    //printf("offset befor copying header:%lu\n",ftell(src));
 
     FILE *dest = fopen("new.mp3", "wb");
     if(dest == NULL)
@@ -169,7 +168,6 @@ Status do_editing(FILE*src,FILE*dest,char *frame_id, char *new_value)
    
         {
             fwrite(tag,1,4,dest);
-            //printf("%lu\n",ftell(dest));
             int new_size=strlen(new_value)+1;
             unsigned char new_size_buf[4];
             new_size_buf[0] = (new_size >> 24) & 0xFF;
@@ -177,25 +175,17 @@ Status do_editing(FILE*src,FILE*dest,char *frame_id, char *new_value)
             new_size_buf[2] = (new_size >> 8) & 0xFF;
             new_size_buf[3] = new_size & 0xFF;
             fwrite(new_size_buf, 1, 4, dest);
-            //printf("%lu\n",ftell(dest));
             fwrite(flag, 1, 2, dest);
-            //printf("%lu\n",ftell(dest));
             fputc(0,dest);
-            //printf("%lu\n",ftell(dest));
             fwrite(new_value,1,strlen(new_value),dest);
-            //printf("%lu\n",ftell(dest));
         }
     else
     {
         
         fwrite(tag, 1, 4, dest);
-        //printf("%lu\n",ftell(dest));
         fwrite(size, 1, 4, dest);
-        //printf("%lu\n",ftell(dest));
         fwrite(flag, 1, 2, dest);
-        //printf("%lu\n",ftell(dest));
         fwrite(data, 1, tag_size, dest);
-        //printf("%lu\n",ftell(dest));
     }
     free(data);
     return success;
